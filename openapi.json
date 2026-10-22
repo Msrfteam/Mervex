@@ -1,0 +1,251 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mervex AI Platform API",
+    "description": "OpenAI-compatible API with 100+ models, plus the Auto-Decision API (millisecond probabilistic decisions). Get a free key at https://mervex.cc.cd/auth",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Msr F Team",
+      "url": "https://msrfteam.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.mervex.cc.cd"
+    }
+  ],
+  "paths": {
+    "/v1/chat/completions": {
+      "post": {
+        "operationId": "createChatCompletion",
+        "summary": "Create a chat completion (OpenAI-compatible)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "model",
+                  "messages"
+                ],
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "description": "Any model id from /v1/models, e.g. Msrfteam/Mervex-ai-v0.1-lite"
+                  },
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "role",
+                        "content"
+                      ],
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "system",
+                            "user",
+                            "assistant"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "default": 1
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "description": "Capped to the model output limit if larger"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chat completion"
+          },
+          "401": {
+            "description": "Missing or invalid key (AUTHENTICATION_REQUIRED)"
+          },
+          "402": {
+            "description": "Premium model requires upgrade (PREMIUM_ACCESS_REQUIRED)"
+          },
+          "429": {
+            "description": "Rate limit or daily quota (RATE_LIMIT_EXCEEDED / INSUFFICIENT_QUOTA)"
+          }
+        }
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "operationId": "listModels",
+        "summary": "List available models (public, no auth)",
+        "responses": {
+          "200": {
+            "description": "Model list"
+          }
+        }
+      }
+    },
+    "/api/ai/decide": {
+      "post": {
+        "operationId": "autoDecision",
+        "summary": "Auto-Decision API - millisecond probabilistic decisions",
+        "description": "Answer structured questions about a state (text or image) with probabilities: noul (yes/no), choice (pick from options with per-option criteria), score (rating with per-value legend). Every user gets 10,000 lifetime requests; linking Google/GitHub on Msr F Team ID adds +2,500 each. RPM 20.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userId",
+                  "state",
+                  "questions"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "description": "Mervex user id"
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "The text to make a decision about"
+                  },
+                  "image": {
+                    "type": "string",
+                    "description": "Optional image URL for vision classification"
+                  },
+                  "fast": {
+                    "type": "boolean"
+                  },
+                  "questions": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "example": {
+                "userId": "usr-xxxxxxxxxxxx",
+                "state": "customer charged twice and demands a refund",
+                "questions": {
+                  "urgent": {
+                    "type": "noul"
+                  },
+                  "team": {
+                    "type": "choice",
+                    "options": [
+                      "outage",
+                      "billing",
+                      "feature"
+                    ],
+                    "criteria": {
+                      "billing": "payment, charge or refund issue",
+                      "outage": "service is down or broken",
+                      "feature": "asking for new functionality"
+                    }
+                  },
+                  "anger": {
+                    "type": "score",
+                    "criteria": [
+                      "1 = calm",
+                      "10 = furious"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Decision answers with probabilities",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "answers": {
+                    "urgent": {
+                      "type": "noul",
+                      "noul": 0.24
+                    },
+                    "team": {
+                      "type": "choice",
+                      "choice": "billing",
+                      "probabilities": {
+                        "outage": 0.002,
+                        "billing": 0.998,
+                        "feature": 0.0002
+                      },
+                      "confidence": 0.987
+                    },
+                    "anger": {
+                      "type": "score",
+                      "score": 0.94,
+                      "confidence": 0.68
+                    }
+                  },
+                  "remaining": 9999
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "RPM exceeded or lifetime balance exhausted (DECIDE_EXHAUSTED)"
+          }
+        }
+      }
+    },
+    "/api/ai/decide/balance": {
+      "get": {
+        "operationId": "decisionBalance",
+        "summary": "Remaining Auto-Decision balance",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance info"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Mervex API key (Mervex-ai-...)"
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "info": {
+    "name": "Mervex AI Platform",
+    "description": "OpenAI-compatible API with 100+ models + Auto-Decision API. Get a free key at https://mervex.cc.cd/auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.mervex.cc.cd"
+    },
+    {
+      "key": "apiKey",
+      "value": "Mervex-ai-YOUR_KEY"
+    },
+    {
+      "key": "userId",
+      "value": "usr-xxxxxxxxxxxx"
+    }
+  ],
+  "item": [
+    {
+      "name": "Chat Completions",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{apiKey}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/chat/completions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "chat",
+            "completions"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"model\": \"Msrfteam/Mervex-ai-v0.1-lite\",\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"Hello! Who are you?\" }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "List Models",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/models",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "models"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auto-Decision",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/ai/decide",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "ai",
+            "decide"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"state\": \"customer charged twice and demands a refund\",\n  \"questions\": {\n    \"urgent\": { \"type\": \"noul\" },\n    \"team\": {\n      \"type\": \"choice\",\n      \"options\": [\"outage\", \"billing\", \"feature\"],\n      \"criteria\": {\n        \"billing\": \"payment, charge or refund issue\",\n        \"outage\": \"service is down or broken\",\n        \"feature\": \"asking for new functionality\"\n      }\n    },\n    \"anger\": { \"type\": \"score\", \"criteria\": [\"1 = calm\", \"10 = furious\"] }\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Decision Balance",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/ai/decide/balance?userId={{userId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "ai",
+            "decide",
+            "balance"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "{{userId}}"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
