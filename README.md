@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 # 🚀 Mervex AI Platform
 
@@ -7,6 +7,7 @@
 [![Website](https://img.shields.io/badge/Website-mervex.cc.cd-00C9FF?style=for-the-badge&logo=googlechrome&logoColor=white)](https://mervex.cc.cd)
 [![API Docs](https://img.shields.io/badge/OpenAPI-openapi.json-6BA539?style=for-the-badge&logo=openapiinitiative&logoColor=white)](./openapi.json)
 [![CLI](https://img.shields.io/badge/CLI-npm%20mervexai-CB3837?style=for-the-badge&logo=npm&logoColor=white)](https://github.com/Msrfteam/Mervexai)
+[![Postman](https://img.shields.io/badge/API_Docs-Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)](https://documenter.getpostman.com/view/59154340/2sBYHUSzJ2)
 [![Telegram](https://img.shields.io/badge/Telegram-@Msrfteam-229ED9?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Msrfteam)
 
 **Official Product: [Msr F Team](https://msrfteam.com)**
